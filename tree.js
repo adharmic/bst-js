@@ -27,13 +27,12 @@ module.exports = class Tree {
         return new TreeNode(values[midIndex], this.buildTree(left), this.buildTree(right)); 
     }
 
-    traverse(node, callback, args = null) {
-      return this.traverse(callback(node, args))
-    }
-
-    insert(value, node) {
+    insert(value, node = null) {
+      if (node == null) {
+        node = this.root;
+      }
       let toInsert = new TreeNode(value);
-      if (value < node.value) {
+      if (value < node.data) {
         // Go left.
         if (node.left == null) {
           node.left = toInsert;
@@ -41,7 +40,7 @@ module.exports = class Tree {
         }
         return this.insert(value, node.left);
       }
-      if (value > node.value) {
+      if (value > node.data) {
         // Go right.
         if (node.right == null) {
           node.right = toInsert;
@@ -52,7 +51,4 @@ module.exports = class Tree {
       return true;
     }
 
-    insert(value) {
-      return this.insert(value, this.root);
-    }
 }
