@@ -1,5 +1,5 @@
 module.exports = class TreeNode {
-    constructor(data, left, right) {
+    constructor(data, left = null, right = null) {
         this._data = data;
         this._left = left;
         this._right = right;
@@ -14,7 +14,7 @@ module.exports = class TreeNode {
     }
     
     get left() {
-        return this.left;
+        return this._left;
     }
 
     set left(newLeft) {
@@ -28,4 +28,5 @@ module.exports = class TreeNode {
     set right(newRight) {
         this._right = newRight;
     }
+    
 }
