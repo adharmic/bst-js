@@ -27,28 +27,72 @@ module.exports = class Tree {
         return new TreeNode(values[midIndex], this.buildTree(left), this.buildTree(right)); 
     }
 
-    insert(value, node = null) {
+    find(value, node = null, leftCallback, rightCallback, foundCallback) {
       if (node == null) {
         node = this.root;
       }
-      let toInsert = new TreeNode(value);
       if (value < node.data) {
-        // Go left.
+        // Go left
         if (node.left == null) {
-          node.left = toInsert;
-          return true;
+          if (leftCallback) {
+            return leftCallback(value, node);
+          }
+          return null;
         }
-        return this.insert(value, node.left);
+        return this.find(value, node.left, leftCallback, rightCallback);
       }
       if (value > node.data) {
-        // Go right.
+        // Go right
         if (node.right == null) {
-          node.right = toInsert;
-          return true;
+          if (rightCallback) {
+            return rightCallback(value, node);
+          }
+          return null;
         }
-        return this.insert(value, node.right);
+        return this.find(value, node.right, leftCallback, rightCallback);
       }
-      return true;
+      if (foundCallback) {
+        return foundCallback(node);
+      }
+      return node;
+    }
+
+    insertLeft(value, node) {
+      node.left = new TreeNode(value);
+      return null;
+    }
+
+    insertRight(value, node) {
+      node.right = new TreeNode(value);
+      return null;
+    }
+
+    insert(value) {
+      this.find(value, this.root, this.insertLeft, this.insertRight);
+    }
+
+    handleDeletion(node) {
+      if (node.left && node.right) {
+        // Two child nodes!
+        // Find in-order successor or predecessor
+        // Swap node with found node
+        // Delete node
+      }
+      else if (node.left) {
+        node = node.left;
+        node.left = null;
+        return true;
+      }
+      else if(node.right) {
+        node = node.right;
+        node.right = null;
+        return true;
+      }
+      return false;
+    }
+
+    delete(value) {
+      this.find(value, this.root, null, null, this.handleDeletion);
     }
 
 }
