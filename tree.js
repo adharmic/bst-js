@@ -128,7 +128,14 @@ module.exports = class Tree {
     })
   }
 
-  levelOrder(callback, node = null, visitQueue = []) {
+  levelOrder(callback = null, node = null, visitQueue = [], agg = false, aggArr = []) {
+    if (callback == null) {
+      agg = true;
+      callback = (node, arr) => {
+        arr.push(node.data);
+        return arr;
+      }
+    }
     if (node == null) {
       node = this.root;
     }
@@ -141,14 +148,103 @@ module.exports = class Tree {
     if (node.right) {
       visitQueue.push(node.right);
     }
-    let res = callback(node);
-    if (res !== null && res !== undefined) {
-      return res;
+    if (agg) {
+      callback(node, aggArr);
+    }
+    else {
+      let res = callback(node);
+      if (res !== null && res !== undefined) {
+        return res;
+      }
     }
     if (visitQueue[0]) {
-      return this.levelOrder(callback, visitQueue[0], visitQueue)
+      return this.levelOrder(callback, visitQueue[0], visitQueue, agg, aggArr);
     }
+    if (agg) return aggArr;
     return null;
   }
 
+  inOrder(callback = null, node = this.root, agg = false, aggArr = []) {
+    if (callback === null) {
+      agg = true;
+      callback = (node, arr) => {
+        arr.push(node.data);
+        return arr;
+      }
+    }
+    if (node.left) {
+      this.inOrder(callback, node.left, agg, aggArr);
+    }
+    if (node) {
+      if (agg) {
+        callback(node, aggArr);
+      }
+      else {
+        let result = callback(node);
+        if (result) {
+          return result;
+        }
+      }
+    }
+    if (node.right) {
+      this.inOrder(callback, node.right, agg, aggArr);
+    }
+    return agg ? aggArr : null;
+  }
+
+  preOrder(callback = null, node = this.root, agg = false, aggArr = []) {
+    if (callback === null) {
+      agg = true;
+      callback = (node, arr) => {
+        arr.push(node.data);
+        return arr;
+      }
+    }
+    if (node) {
+      if (agg) {
+        callback(node, aggArr);
+      }
+      else {
+        let result = callback(node);
+        if (result) {
+          return result;
+        }
+      }
+    }
+    if (node.left) {
+      this.preOrder(callback, node.left, agg, aggArr);
+    }
+    if (node.right) {
+      this.preOrder(callback, node.right, agg, aggArr);
+    }
+    return agg ? aggArr : null;
+  }
+
+  postOrder(callback = null, node = this.root, agg = false, aggArr = []) {
+    if (callback === null) {
+      agg = true;
+      callback = (node, arr) => {
+        arr.push(node.data);
+        return arr;
+      }
+    }
+    if (node.left) {
+      this.postOrder(callback, node.left, agg, aggArr);
+    }
+    if (node.right) {
+      this.postOrder(callback, node.right, agg, aggArr);
+    }
+    if (node) {
+      if (agg) {
+        callback(node, aggArr);
+      }
+      else {
+        let result = callback(node);
+        if (result) {
+          return result;
+        }
+      }
+    }
+    return agg ? aggArr : null;
+  }
 }
